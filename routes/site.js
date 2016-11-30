@@ -14,9 +14,10 @@ router.get('/:id/put', function(req, res, next) {
         var sites = db.collection('sites');
 
         var exists = sites.find({"_id": req.params.id}, {_id: 1}).limit(1);
-        if (exists)
+        if (exists) {
             res.json({'result' : 'already exists'});
-
+        }
+        
         sites.insertOne({
                 "_id": req.params.id,
                 "site_name": "test sample",
@@ -38,12 +39,22 @@ router.get('/', function(req, res, next) {
     MongoClient.connect(url, function (err, db) {
         if(err) throw err;
 
-        var sites = db.collection('sites');
+        var cursor = db.collection('sites').find({}, {"site_name" : 1, "site_url" : 1});
+        var sites = [];
 
-        sites.find({}, {"site_name" : 1, "site_url" : 1}).toArray(function(err, cursor){
+        cursor.each(function(err, item){
             if(err) throw err;
-            res.json(cursor);
+            if(item == null) {
+                db.close(); 
+                callback();
+                return; 
+            }
+            sites.push([item.site_name, item.site_url]);
         });
+
+        function callback(){
+            res.json(sites);
+        }
     });
 });
 
@@ -56,9 +67,9 @@ router.get('/:id/', function(req, res, next) {
 
         var sites = db.collection('sites');
 
-        sites.find({"_id" : req.params.id}, {"site_name" : 1, "site_url" : 1}).toArray(function(err, cursor){
+        sites.findOne({"_id" : req.params.id}, {"site_name" : 1, "site_url" : 1}, function(err, cursor){
             if(err) throw err;
-            res.send(cursor);
+            res.json(cursor);
         });
     });
 });
