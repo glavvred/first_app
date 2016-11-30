@@ -17,7 +17,7 @@ router.get('/:id/put', function(req, res, next) {
         if (exists) {
             res.json({'result' : 'already exists'});
         }
-        
+
         sites.insertOne({
                 "_id": req.params.id,
                 "site_name": "test sample",
@@ -29,8 +29,8 @@ router.get('/:id/put', function(req, res, next) {
                 res.json({'result' : 'inserted ' + op_result.result.n + 'elements '});
         });
     });
-    db.close();
     res.json({'result': 'you should not see this ever'});
+    db.close();  
 });
 
 
