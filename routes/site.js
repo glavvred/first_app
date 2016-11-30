@@ -8,40 +8,41 @@ var url = 'mongodb://127.0.0.1:27017/sites';
 
 // sample data insert
 
-router.get('/sample', function(req, res, next) {
-    console.log('sample data insert\n');
+router.get('/:id/put', function(req, res, next) {
     MongoClient.connect(url, function (err, db) {
         assert.equal(null, err, '######################## connection error - no MongoDb #######################');
-
         var sites = db.collection('sites');
 
+        var exists = sites.find({"_id": req.params.id}, {_id: 1}).limit(1);
+        if (exists)
+            res.json({'result' : 'already exists'});
+
         sites.insertOne({
-                "_id": "583d7a456ec7680d20552d4b",
+                "_id": req.params.id,
                 "site_name": "test sample",
                 "site_url": "http://www.greecevac-ru.com/Russia/Tracking1.aspx"
             }, function (err, op_result) {
                 if (err) {
-                    return console.error(err);
+                    console.log(err);
                 }
-                console.log('inserted:');
-		        console.log(op_result.ops[0]);
+                res.json({'result' : 'inserted ' + op_result.result.n + 'elements '});
         });
     });
-    res.json({'result': 'successfully added samples'});
+    db.close();
+    res.json({'result': 'you should not see this ever'});
 });
 
 
 /* GET all sites. */
 router.get('/', function(req, res, next) {
-    console.log('all sites list\n');
     MongoClient.connect(url, function (err, db) {
         if(err) throw err;
 
         var sites = db.collection('sites');
 
-        sites.find().toArray(function(err, cursor){
+        sites.find({}, {"site_name" : 1, "site_url" : 1}).toArray(function(err, cursor){
             if(err) throw err;
-            res.send(cursor);
+            res.json(cursor);
         });
     });
 });
@@ -55,7 +56,7 @@ router.get('/:id/', function(req, res, next) {
 
         var sites = db.collection('sites');
 
-        sites.find({"_id" : req.params.id}).toArray(function(err, cursor){
+        sites.find({"_id" : req.params.id}, {"site_name" : 1, "site_url" : 1}).toArray(function(err, cursor){
             if(err) throw err;
             res.send(cursor);
         });
