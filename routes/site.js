@@ -16,8 +16,9 @@ router.get('/sample', function(req, res, next) {
         var sites = db.collection('sites');
 
         sites.insertOne({
-                "site_name": "Gr22222ece",
-                "site_url": "http:2222//www.greecevac-ru.com/Russia/Tracking1.aspx"
+                "_id": "583d7a456ec7680d20552d4b",
+                "site_name": "test sample",
+                "site_url": "http://www.greecevac-ru.com/Russia/Tracking1.aspx"
             }, function (err, op_result) {
                 if (err) {
                     return console.error(err);
@@ -54,7 +55,7 @@ router.get('/:id/', function(req, res, next) {
 
         var sites = db.collection('sites');
 
-        sites.find().toArray(function(err, cursor){
+        sites.find({"_id" : req.params.id}).toArray(function(err, cursor){
             if(err) throw err;
             res.send(cursor);
         });

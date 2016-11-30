@@ -2,4 +2,15 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p sites
+  ul
+    li 
+      a(href="/site") GET sites 
+    li
+      a(href="/site/583d7a456ec7680d20552d4b") GET sites id 583d7a456ec7680d20552d4b 
+    li
+      a(href="/site/583d7a456ec7680d20552d4b/put") (ADD) PUT site id 583d7a456ec7680d20552d4b 
+    li
+      a(href="/site/583d7a456ec7680d20552d4b/post") POST site id 583d7a456ec7680d20552d4b  
+    li
+      a(href="/site/583d7a456ec7680d20552d4b/delete") DELETE site id 583d7a456ec7680d20552d4b  
